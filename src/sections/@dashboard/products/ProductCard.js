@@ -1,23 +1,9 @@
+import { Box, Paper, Typography } from '@mui/material';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 import PropTypes from 'prop-types';
-import { Link as RouterLink } from 'react-router-dom';
-// material
-import { Box, Card, Link, Typography, Stack } from '@mui/material';
-import { styled } from '@mui/material/styles';
-// utils
-import { fCurrency } from '../../../utils/formatNumber';
-// components
-import Label from '../../../components/Label';
-import { ColorPreview } from '../../../components/color-utils';
 
 // ----------------------------------------------------------------------
-
-const ProductImgStyle = styled('img')({
-  top: 0,
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  position: 'absolute',
-});
 
 // ----------------------------------------------------------------------
 
@@ -26,54 +12,44 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale } = product;
-
   return (
-    <Card>
-      <Box sx={{ pt: '100%', position: 'relative' }}>
-        {status && (
-          <Label
-            variant="filled"
-            color={(status === 'sale' && 'error') || 'info'}
+    <Paper elevation={6}>
+      <Box display="flex" p={2} mt={2}>
+        <Box width="30%">
+          <ImageList variant="masonry" cols={3} gap={8}>
+            {product.imageSrc.map((item) => (
+              <ImageListItem key={item}>
+                <img
+                  src={`${item}?w=248&fit=crop&auto=format`}
+                  srcSet={`${item}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                  alt="img"
+                  loading="lazy"
+                />
+              </ImageListItem>
+            ))}
+          </ImageList>
+        </Box>
+        <Box width="70%">
+          <Typography variant="h3">{product.title}</Typography>
+          <Box display="flex" justifyContent="space-around" alignItems="center">
+            <Typography variant="h5">{`Giá: ${product.price}`}</Typography>
+            <Typography variant="h5">{`Diện tích: ${product.area}`}</Typography>
+            <Typography variant="h5">{`Số phòng: ${product.room}`}</Typography>
+          </Box>
+          <Typography
             sx={{
-              zIndex: 9,
-              top: 16,
-              right: 16,
-              position: 'absolute',
-              textTransform: 'uppercase',
+              marginTop: '20px',
+              display: '-webkit-box',
+              overflow: 'hidden',
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: 2,
             }}
+            variant="body1"
           >
-            {status}
-          </Label>
-        )}
-        <ProductImgStyle alt={name} src={cover} />
+            {product.detail}
+          </Typography>
+        </Box>
       </Box>
-
-      <Stack spacing={2} sx={{ p: 3 }}>
-        <Link to="#" color="inherit" underline="hover" component={RouterLink}>
-          <Typography variant="subtitle2" noWrap>
-            {name}
-          </Typography>
-        </Link>
-
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <ColorPreview colors={colors} />
-          <Typography variant="subtitle1">
-            <Typography
-              component="span"
-              variant="body1"
-              sx={{
-                color: 'text.disabled',
-                textDecoration: 'line-through',
-              }}
-            >
-              {priceSale && fCurrency(priceSale)}
-            </Typography>
-            &nbsp;
-            {fCurrency(price)}
-          </Typography>
-        </Stack>
-      </Stack>
-    </Card>
+    </Paper>
   );
 }

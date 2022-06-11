@@ -83,9 +83,11 @@ export default function LoginForm() {
           </Link>
         </Stack>
 
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
-          Login
-        </LoadingButton>
+        <Link to="/dashboard/app" component={RouterLink}>
+          <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+            Login
+          </LoadingButton>
+        </Link>
       </Form>
     </FormikProvider>
   );
