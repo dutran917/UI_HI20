@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { NavLink as RouterLink, matchPath, useLocation } from 'react-router-dom';
 // material
@@ -141,13 +141,24 @@ NavSection.propTypes = {
 
 export default function NavSection({ navConfig, ...other }) {
   const { pathname } = useLocation();
-
+  const [nav, setNav] = useState(navConfig.navConfigAdmin);
   const match = (path) => (path ? !!matchPath({ path, end: false }, pathname) : false);
-
+  useEffect(() => {
+    if (pathname.includes('admin')) {
+      console.log('admin');
+      setNav(navConfig.navConfigAdmin);
+    }
+    if (pathname.includes('userdc')) {
+      setNav(navConfig.navConfigUserDC);
+    }
+    if (pathname.includes('userdk')) {
+      setNav(navConfig.navConfigUserDK);
+    }
+  }, [pathname]);
   return (
     <Box {...other}>
       <List disablePadding sx={{ p: 1 }}>
-        {navConfig.map((item) => (
+        {nav.map((item) => (
           <NavItem key={item.title} item={item} active={match} />
         ))}
       </List>

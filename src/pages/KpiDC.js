@@ -9,7 +9,7 @@ import { AppWebsiteVisits } from '../sections/@dashboard/app';
 
 // ----------------------------------------------------------------------
 
-export default function DashboardApp() {
+export default function KpiDC() {
   const theme = useTheme();
 
   return (
@@ -22,8 +22,7 @@ export default function DashboardApp() {
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <AppWebsiteVisits
-              title="Biểu đồ doanh thu"
-              subheader="(+43%) so với năm trước (2021)"
+              title="KPI các tháng trong năm"
               chartLabels={[
                 'tháng 1',
                 'tháng 2',
@@ -40,17 +39,17 @@ export default function DashboardApp() {
               ]}
               chartData={[
                 {
-                  name: 'Đầu chủ',
+                  name: 'Số bài đăng',
                   type: 'column',
                   fill: 'solid',
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30, 12],
+                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
                 },
                 {
-                  name: 'Đầu khách',
+                  name: 'KPI',
                   type: 'column',
                   fill: 'gradient',
-                  color: 'green',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43, 15],
+                  color: 'red',
+                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
                 },
               ]}
             />

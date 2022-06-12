@@ -83,7 +83,7 @@ export default function LoginForm() {
           </Link>
         </Stack>
 
-        <Link to="/dashboard/app" component={RouterLink}>
+        <Link to="/admin/turnover" component={RouterLink}>
           <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
             Login
           </LoadingButton>

@@ -5,42 +5,46 @@ import Iconify from '../../components/Iconify';
 
 const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 
-const navConfig = [
+const navConfigAdmin = [
   {
     title: 'Doanh thu',
-    path: '/dashboard/app',
+    path: '/admin/turnover',
     icon: getIcon('eva:pie-chart-2-fill'),
   },
   {
     title: 'Nhân viên',
-    path: '/dashboard/user',
+    path: '/admin/user',
     icon: getIcon('eva:people-fill'),
   },
   {
     title: 'Danh sách bất động sản',
-    path: '/dashboard/products',
+    path: '/admin/products',
     icon: getIcon('material-symbols:real-estate-agent'),
   },
-  // {
-  //   title: 'blog',
-  //   path: '/dashboard/blog',
-  //   icon: getIcon('eva:file-text-fill'),
-  // },
-  // {
-  //   title: 'login',
-  //   path: '/login',
-  //   icon: getIcon('eva:lock-fill'),
-  // },
-  // {
-  //   title: 'register',
-  //   path: '/register',
-  //   icon: getIcon('eva:person-add-fill'),
-  // },
-  // {
-  //   title: 'Not found',
-  //   path: '/404',
-  //   icon: getIcon('eva:alert-triangle-fill'),
-  // },
 ];
-
+const navConfigUserDC = [
+  {
+    title: 'Danh sách bài đăng',
+    path: '/userdc/list-products',
+    icon: getIcon('material-symbols:real-estate-agent'),
+  },
+  {
+    title: 'KPI',
+    path: '/userdc/kpi',
+    icon: getIcon('eva:people-fill'),
+  },
+];
+const navConfigUserDK = [
+  {
+    title: 'Danh sách Bất động sản',
+    path: '/userdk/list-products',
+    icon: getIcon('material-symbols:real-estate-agent'),
+  },
+  {
+    title: 'KPI',
+    path: '/userdk/kpi',
+    icon: getIcon('eva:people-fill'),
+  },
+];
+const navConfig = { navConfigAdmin, navConfigUserDC, navConfigUserDK };
 export default navConfig;

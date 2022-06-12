@@ -1,17 +1,15 @@
-import { Box, Paper, Typography } from '@mui/material';
+import { useState } from 'react';
+import { Box, Paper, Typography, Button } from '@mui/material';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import PropTypes from 'prop-types';
+import DetailDialog from './DetailDialog';
 
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
 
-ShopProductCard.propTypes = {
-  product: PropTypes.object,
-};
-
-export default function ShopProductCard({ product }) {
+const ShopProductCard = ({ product }) => {
+  const [isOpenDetailDialog, setIsOpenDetailDialog] = useState(false);
   return (
     <Paper elevation={6}>
       <Box display="flex" p={2} mt={2}>
@@ -30,7 +28,7 @@ export default function ShopProductCard({ product }) {
           </ImageList>
         </Box>
         <Box width="70%">
-          <Typography variant="h3">{product.title}</Typography>
+          <Typography variant="h4">{product.title}</Typography>
           <Box display="flex" justifyContent="space-around" alignItems="center">
             <Typography variant="h5">{`Giá: ${product.price}`}</Typography>
             <Typography variant="h5">{`Diện tích: ${product.area}`}</Typography>
@@ -49,7 +47,11 @@ export default function ShopProductCard({ product }) {
             {product.detail}
           </Typography>
         </Box>
+        <Button onClick={() => setIsOpenDetailDialog(true)}> Xem chi tiet</Button>
       </Box>
+      <DetailDialog isOpen={isOpenDetailDialog} handleClose={() => setIsOpenDetailDialog(false)} product={product} />
     </Paper>
   );
-}
+};
+
+export default ShopProductCard;
