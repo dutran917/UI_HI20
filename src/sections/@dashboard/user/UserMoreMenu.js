@@ -1,13 +1,19 @@
 import { useRef, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 // material
-import { Menu, MenuItem, IconButton, ListItemIcon, ListItemText } from '@mui/material';
+import {
+  Menu,
+  MenuItem,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+} from '@mui/material';
 // component
 import Iconify from '../../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
-export default function UserMoreMenu() {
+export default function UserMoreMenu({ setIsOpenKPI }) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -29,16 +35,27 @@ export default function UserMoreMenu() {
       >
         <MenuItem sx={{ color: 'text.secondary' }}>
           <ListItemIcon>
-            <Iconify icon="eva:trash-2-outline" width={24} height={24} />
+            <Iconify icon="fa:ban" width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Delete" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText
+            primary="Block người dùng"
+            primaryTypographyProps={{ variant: 'body2' }}
+          />
         </MenuItem>
 
-        <MenuItem component={RouterLink} to="#" sx={{ color: 'text.secondary' }}>
+        <MenuItem
+          component={RouterLink}
+          to="#"
+          sx={{ color: 'text.secondary' }}
+          onClick={() => setIsOpenKPI(true)}
+        >
           <ListItemIcon>
             <Iconify icon="eva:edit-fill" width={24} height={24} />
           </ListItemIcon>
-          <ListItemText primary="Edit" primaryTypographyProps={{ variant: 'body2' }} />
+          <ListItemText
+            primary="Giao KPI"
+            primaryTypographyProps={{ variant: 'body2' }}
+          />
         </MenuItem>
       </Menu>
     </>

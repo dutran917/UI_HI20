@@ -1,6 +1,6 @@
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import {
@@ -9,6 +9,7 @@ import {
   Stack,
   Avatar,
   Button,
+  Box,
   Checkbox,
   TableRow,
   TableBody,
@@ -17,6 +18,14 @@ import {
   Typography,
   TableContainer,
   TablePagination,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Slider,
+  FormControl,
+  Select,
+  MenuItem,
+  DialogActions,
 } from '@mui/material';
 // components
 import Page from '../components/Page';
@@ -24,9 +33,14 @@ import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
-import { UserListHead, UserListToolbar, UserMoreMenu } from '../sections/@dashboard/user';
+import {
+  UserListHead,
+  UserListToolbar,
+  UserMoreMenu,
+} from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
+import UserDetail from './UserDetail';
 
 // ----------------------------------------------------------------------
 
@@ -65,7 +79,10 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(
+      array,
+      (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+    );
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -83,6 +100,30 @@ export default function User() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const [selectedMonth, setSelectedMonth] = useState('Tháng 1');
+
+  const [isOpenDetail, setIsOpenDetail] = useState(false);
+
+  const [isOpenKPI, setIsOpenKPI] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const month = [
+    'Tháng 1',
+    'Tháng 2',
+    'Tháng 3',
+    'Tháng 4',
+    'Tháng 5',
+    'Tháng 6',
+    'Tháng 7',
+    'Tháng 8',
+    'Tháng 9',
+    'Tháng 10',
+    'Tháng 11',
+    'Tháng 12',
+  ];
+  useEffect(() => {
+    console.log(selectedUser, isOpenDetail);
+  }, [selectedUser, isOpenDetail]);
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -108,7 +149,10 @@ export default function User() {
     } else if (selectedIndex === selected.length - 1) {
       newSelected = newSelected.concat(selected.slice(0, -1));
     } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1)
+      );
     }
     setSelected(newSelected);
   };
@@ -126,16 +170,26 @@ export default function User() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  const emptyRows =
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(
+    USERLIST,
+    getComparator(order, orderBy),
+    filterName
+  );
 
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
     <Page title="User">
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={5}
+        >
           <Typography variant="h4" gutterBottom>
             Quản lý nhân viên
           </Typography>
@@ -145,7 +199,11 @@ export default function User() {
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <UserListToolbar
+            numSelected={selected.length}
+            filterName={filterName}
+            onFilterName={handleFilterByName}
+          />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -160,45 +218,84 @@ export default function User() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                    const isItemSelected = selected.indexOf(name) !== -1;
+                  {filteredUsers
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => {
+                      const {
+                        id,
+                        name,
+                        role,
+                        status,
+                        company,
+                        avatarUrl,
+                        isVerified,
+                      } = row;
+                      const isItemSelected = selected.indexOf(name) !== -1;
 
-                    return (
-                      <TableRow
-                        hover
-                        key={id}
-                        tabIndex={-1}
-                        role="checkbox"
-                        selected={isItemSelected}
-                        aria-checked={isItemSelected}
-                      >
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
-                              {name}
-                            </Typography>
-                          </Stack>
-                        </TableCell>
-                        <TableCell align="left">{company}</TableCell>
-                        <TableCell align="left">{role}</TableCell>
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-                        <TableCell align="left">
-                          <Label variant="ghost" color={(status === 'banned' && 'error') || 'success'}>
-                            {sentenceCase(status)}
-                          </Label>
-                        </TableCell>
+                      return (
+                        <TableRow
+                          hover
+                          key={id}
+                          tabIndex={-1}
+                          role="checkbox"
+                          selected={isItemSelected}
+                          aria-checked={isItemSelected}
+                        >
+                          <TableCell padding="checkbox">
+                            <Checkbox
+                              checked={isItemSelected}
+                              onChange={(event) => handleClick(event, name)}
+                            />
+                          </TableCell>
+                          <TableCell component="th" scope="row" padding="none">
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              spacing={2}
+                            >
+                              <Avatar alt={name} src={avatarUrl} />
+                              <Typography
+                                sx={[
+                                  {
+                                    '&:hover': {
+                                      color: 'red',
+                                      cursor: 'pointer',
+                                    },
+                                  },
+                                ]}
+                                variant="subtitle2"
+                                noWrap
+                                onClick={() => {
+                                  setSelectedUser(row);
+                                  setIsOpenDetail(true);
+                                }}
+                              >
+                                {name}
+                              </Typography>
+                            </Stack>
+                          </TableCell>
+                          <TableCell align="left">{company}</TableCell>
+                          <TableCell align="left">{role}</TableCell>
+                          <TableCell align="left">
+                            {isVerified ? 'Yes' : 'No'}
+                          </TableCell>
+                          <TableCell align="left">
+                            <Label
+                              variant="ghost"
+                              color={
+                                (status === 'banned' && 'error') || 'success'
+                              }
+                            >
+                              {sentenceCase(status)}
+                            </Label>
+                          </TableCell>
 
-                        <TableCell align="right">
-                          <UserMoreMenu />
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                          <TableCell align="right">
+                            <UserMoreMenu setIsOpenKPI={setIsOpenKPI} />
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   {emptyRows > 0 && (
                     <TableRow style={{ height: 53 * emptyRows }}>
                       <TableCell colSpan={6} />
@@ -230,6 +327,51 @@ export default function User() {
           />
         </Card>
       </Container>
+      <Dialog open={isOpenKPI} onClose={() => setIsOpenKPI(false)} fullWidth>
+        <DialogTitle>Giao KPI cho nhân viên</DialogTitle>
+        <DialogContent>
+          <Box>
+            <Typography variant="h5">Chọn tháng</Typography>
+            <FormControl>
+              <Select
+                label="Tháng"
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                value={selectedMonth}
+              >
+                {month.map((item, index) => (
+                  <MenuItem key={index} value={item}>
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+          <Box mt={3}>
+            <Typography variant="h5">Đặt KPI tháng cho nhân viên</Typography>
+            <Slider
+              aria-label="Temperature"
+              defaultValue={5}
+              valueLabelDisplay="auto"
+              step={1}
+              marks
+              min={5}
+              max={30}
+            />
+          </Box>
+        </DialogContent>
+
+        <DialogActions>
+          <Button>
+            <Button onClick={() => setIsOpenKPI(false)}>Cancel</Button>
+            <Button onClick={() => setIsOpenKPI(false)}>OK</Button>
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <UserDetail
+        isOpen={isOpenDetail}
+        setIsOpen={setIsOpenDetail}
+        user={selectedUser}
+      />
     </Page>
   );
 }
