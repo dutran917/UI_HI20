@@ -105,7 +105,7 @@ export default function User() {
   const [isOpenDetail, setIsOpenDetail] = useState(false);
 
   const [isOpenKPI, setIsOpenKPI] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(USERLIST[0]);
 
   const month = [
     'Tháng 1',
@@ -121,9 +121,7 @@ export default function User() {
     'Tháng 11',
     'Tháng 12',
   ];
-  useEffect(() => {
-    console.log(selectedUser, isOpenDetail);
-  }, [selectedUser, isOpenDetail]);
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -173,12 +171,15 @@ export default function User() {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
-  const filteredUsers = applySortFilter(
-    USERLIST,
-    getComparator(order, orderBy),
-    filterName
+  const [filteredUsers, setFilteredUsers] = useState(
+    applySortFilter(USERLIST, getComparator(order, orderBy), filterName)
   );
 
+  useEffect(() => {
+    setFilteredUsers(
+      applySortFilter(USERLIST, getComparator(order, orderBy), filterName)
+    );
+  }, [filterName]);
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
@@ -193,9 +194,6 @@ export default function User() {
           <Typography variant="h4" gutterBottom>
             Quản lý nhân viên
           </Typography>
-          {/* <Button variant="contained" component={RouterLink} to="#" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
-          </Button> */}
         </Stack>
 
         <Card>
@@ -283,15 +281,21 @@ export default function User() {
                             <Label
                               variant="ghost"
                               color={
-                                (status === 'banned' && 'error') || 'success'
+                                (row.status === 'banned' && 'error') ||
+                                'success'
                               }
                             >
-                              {sentenceCase(status)}
+                              {sentenceCase(row.status)}
                             </Label>
                           </TableCell>
 
                           <TableCell align="right">
-                            <UserMoreMenu setIsOpenKPI={setIsOpenKPI} />
+                            <UserMoreMenu
+                              setIsOpenKPI={setIsOpenKPI}
+                              user={row}
+                              setUserList={setFilteredUsers}
+                              userList={filteredUsers}
+                            />
                           </TableCell>
                         </TableRow>
                       );
@@ -361,10 +365,8 @@ export default function User() {
         </DialogContent>
 
         <DialogActions>
-          <Button>
-            <Button onClick={() => setIsOpenKPI(false)}>Cancel</Button>
-            <Button onClick={() => setIsOpenKPI(false)}>OK</Button>
-          </Button>
+          <Button onClick={() => setIsOpenKPI(false)}>Cancel</Button>
+          <Button onClick={() => setIsOpenKPI(false)}>OK</Button>
         </DialogActions>
       </Dialog>
       <UserDetail

@@ -13,10 +13,28 @@ import Iconify from '../../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
-export default function UserMoreMenu({ setIsOpenKPI }) {
+export default function UserMoreMenu({
+  setUserList,
+  userList,
+  user,
+  setIsOpenKPI,
+}) {
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
-
+  const changeStatus = (user) => {
+    const newArr = userList.map((item) => {
+      if (item.id === user.id) {
+        if (item.status === 'active') {
+          item.status = 'banned';
+        } else {
+          item.status = 'active';
+        }
+        console.log(item);
+      }
+      return item;
+    });
+    return newArr;
+  };
   return (
     <>
       <IconButton ref={ref} onClick={() => setIsOpen(true)}>
@@ -33,12 +51,18 @@ export default function UserMoreMenu({ setIsOpenKPI }) {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }}>
+        <MenuItem
+          sx={{ color: 'text.secondary' }}
+          onClick={() => {
+            setIsOpen(false);
+            setUserList(changeStatus(user));
+          }}
+        >
           <ListItemIcon>
             <Iconify icon="fa:ban" width={24} height={24} />
           </ListItemIcon>
           <ListItemText
-            primary="Block người dùng"
+            primary={user.status === 'active' ? 'Block người dùng' : 'Gỡ Block'}
             primaryTypographyProps={{ variant: 'body2' }}
           />
         </MenuItem>
@@ -47,7 +71,10 @@ export default function UserMoreMenu({ setIsOpenKPI }) {
           component={RouterLink}
           to="#"
           sx={{ color: 'text.secondary' }}
-          onClick={() => setIsOpenKPI(true)}
+          onClick={() => {
+            setIsOpenKPI(true);
+            setIsOpen(false);
+          }}
         >
           <ListItemIcon>
             <Iconify icon="eva:edit-fill" width={24} height={24} />
